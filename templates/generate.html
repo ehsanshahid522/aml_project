@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muse Text Gen - AI Magic Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <p>Awakening the Muse...</p>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <header>
+            <h1>Muse Text Gen</h1>
+            <p class="subtitle">Powered by GPT-2. Enter a prompt and watch the AI weave a narrative beyond imagination.
+            </p>
+        </header>
+
+        <div class="form-card">
+            <form id="generate-form" method="POST">
+                <div class="form-group">
+                    <label for="prompt">Story Prompt</label>
+                    <textarea name="prompt" id="prompt" rows="4" required
+                        placeholder="Once upon a time in a digital realm...">{{ prompt if prompt else '' }}</textarea>
+                </div>
+
+                <div class="slider-container">
+                    <label for="temperature">Creativity Level: <span id="temp-val">{{ temperature }}</span></label>
+                    <input type="range" name="temperature" id="temperature" min="0.1" max="1.5" step="0.1"
+                        value="{{ temperature }}">
+                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">Higher values produce
+                        more creative but less predictable text.</p>
+                </div>
+
+                <button type="submit"><i class="fas fa-sparkles"></i> Conjure Story</button>
+            </form>
+
+            {% if result %}
+            <div class="result-box">
+                <div class="floating-actions">
+                    <button class="copy-btn" onclick="copyToClipboard('generated-text')">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--text-dim); margin-bottom: 1rem;">Generated Text:</p>
+                <div id="generated-text" style="line-height: 1.8; color: var(--text-main);">
+                    {{ result }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('gen-form').onsubmit = () => {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        };
+    </script>
+</body>
+
+</html>

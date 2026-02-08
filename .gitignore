@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+static/uploads/*
+!static/uploads/.gitkeep
+# models/*.pth
+.vscode/
+pip_list.txt
+*.mp3
+dataset/

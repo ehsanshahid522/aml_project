@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}Neural Translate - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Neural Translate</h1>
+<p>Context-aware English to Urdu sequence-to-sequence translation.</p>
+{% endblock %}
+
+{% block content %}
+<div class="service-panel glass-card">
+  <form action="/translate" method="post" class="quantum-form">
+    <div class="translation-grid">
+      <div class="input-group">
+        <label>Source (English)</label>
+        <textarea name="text" placeholder="Enter text to translate..." required></textarea>
+      </div>
+      <div class="input-group">
+        <label>Target (Urdu)</label>
+        <div class="output-area {% if translated_text %}active{% endif %}">
+          {% if translated_text %}
+          {{ translated_text }}
+          {% else %}
+          <span class="placeholder">Translation will appear here...</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-quantum full-width">
+      <i class="fas fa-sync-alt"></i> Execute Translation
+    </button>
+  </form>
+</div>
+
+<style>
+  .service-panel {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .translation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .input-group label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  textarea,
+  .output-area {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    min-height: 250px;
+    transition: var(--transition);
+  }
+
+  .output-area {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    direction: rtl;
+    /* Urdu is RTL */
+    font-family: 'Noto Nastaliq Urdu', serif;
+  }
+
+  .output-area.active {
+    background: rgba(0, 210, 255, 0.03);
+  }
+
+  .output-area .placeholder {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    direction: ltr;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+  }
+
+  .full-width {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .translation-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}

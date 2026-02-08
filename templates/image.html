@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Vision - AI Magic Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <p>Analyzing Image...</p>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <header>
+            <h1>Gender Vision</h1>
+            <p class="subtitle">Upload a portrait to identify gender using our advanced CNN model.</p>
+        </header>
+
+        <div class="form-card">
+            <div id="preview-container"
+                style="display: none; width: 100%; height: 300px; border-radius: 1.5rem; overflow: hidden; margin-bottom: 2rem; border: 2px dashed var(--glass-border);">
+                <img id="preview-img" src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+
+            <form id="upload-form" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Select Image</label>
+                    <input type="file" name="file" id="file" required accept="image/*">
+                </div>
+                <button type="submit"><i class="fas fa-search"></i> Start Classification</button>
+            </form>
+
+            {% if prediction %}
+            <div class="result-box">
+                <p>Result:</p>
+                <h2
+                    style="font-size: 2.5rem; margin-top: 0.5rem; background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    {{ prediction }}
+                </h2>
+
+                {% if "Error" not in prediction %}
+                <div class="confidence-container">
+                    <p style="font-size: 0.875rem; color: var(--text-dim);">Confidence Score:</p>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill"
+                            style="width: {{ (probability * 100) if prediction == 'Male' else ((1 - probability) * 100) }}%;">
+                        </div>
+                    </div>
+                    <p style="font-size: 0.75rem; color: var(--text-dim); text-align: right;">
+                        {{ ((probability * 100) if prediction == 'Male' else ((1 - probability) * 100))|round(2) }}%
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if "Error" in prediction %}
+                <p style="color: #ef4444; margin-top: 1rem;">{{ prediction }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImg = document.getElementById('preview-img');
+        const form = document.getElementById('upload-form');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            loadingOverlay.style.display = 'flex';
+        });
+    </script>
+</body>
+
+</html>

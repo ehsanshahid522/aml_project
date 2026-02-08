@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block title %}Text Synthesis - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Text Synthesis</h1>
+<p>Neural text generation powered by GPT-2 architecture.</p>
+{% endblock %}
+
+{% block content %}
+<div class="service-panel glass-card">
+  <form action="/textgen" method="post" class="quantum-form">
+    <div class="input-group">
+      <label for="prompt">Synthesis Prompt</label>
+      <textarea id="prompt" name="prompt" placeholder="Enter a seed sentence for the AI to expand upon..."
+        required></textarea>
+    </div>
+
+    <button type="submit" class="btn-quantum full-width">
+      <i class="fas fa-magic"></i> Synthesize Text
+    </button>
+  </form>
+
+  {% if generated_text %}
+  <div class="result-container animate-fade-in">
+    <div class="result-header">Engine Output</div>
+    <div class="result-display text-output">
+      {{ generated_text }}
+    </div>
+    <div class="result-note">
+      <i class="fas fa-info-circle"></i> Output is generated token-by-token based on probability distributions.
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .service-panel {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .quantum-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .input-group label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  textarea {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    min-height: 120px;
+    resize: vertical;
+    transition: var(--transition);
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background: rgba(0, 210, 255, 0.05);
+  }
+
+  .full-width {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .text-output {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    white-space: pre-wrap;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--accent-blue);
+  }
+</style>
+{% endblock %}

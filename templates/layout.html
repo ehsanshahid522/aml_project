@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Services Hub{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">AI</div>
+                <span class="brand-name">Quantum Hub</span>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    <i class="fas fa-th-large"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/gender" class="nav-link {% if request.path == '/gender' %}active{% endif %}">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="nav-text">Gender Discovery</span>
+                </a>
+                <a href="/textgen" class="nav-link {% if request.path == '/textgen' %}active{% endif %}">
+                    <i class="fas fa-pen-nib"></i>
+                    <span class="nav-text">Text Synthesis</span>
+                </a>
+                <a href="/translate" class="nav-link {% if request.path == '/translate' %}active{% endif %}">
+                    <i class="fas fa-language"></i>
+                    <span class="nav-text">Neural Translate</span>
+                </a>
+                <a href="/sentiment" class="nav-link {% if request.path == '/sentiment' %}active{% endif %}">
+                    <i class="fas fa-smile-beam"></i>
+                    <span class="nav-text">Empathy Engine</span>
+                </a>
+                <a href="/qa" class="nav-link {% if request.path == '/qa' %}active{% endif %}">
+                    <i class="fas fa-brain"></i>
+                    <span class="nav-text">Cognitive QA</span>
+                </a>
+                <a href="/zsl" class="nav-link {% if request.path == '/zsl' %}active{% endif %}">
+                    <i class="fas fa-bullseye"></i>
+                    <span class="nav-text">Zero-Shot Lab</span>
+                </a>
+                <a href="/clustering" class="nav-link {% if request.path == '/clustering' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i>
+                    <span class="nav-text">Data Clusters</span>
+                </a>
+                <a href="/dbscan" class="nav-link {% if request.path == '/dbscan' %}active{% endif %}">
+                    <i class="fas fa-braille"></i>
+                    <span class="nav-text">DBSCAN Clusters</span>
+                </a>
+                <a href="/apriori" class="nav-link {% if request.path == '/apriori' %}active{% endif %}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="nav-text">Association Rules</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    {% block page_header %}{% endblock %}
+                </div>
+                <div class="user-profile">
+                    <div class="status-pill">
+                        <span class="dot"></span> Online
+                    </div>
+                </div>
+            </header>
+
+            <section class="content-area animate-fade-in">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+
+    <style>
+        .status-pill {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-pill .dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+        }
+    </style>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

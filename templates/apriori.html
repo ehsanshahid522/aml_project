@@ -1,0 +1,209 @@
+{% extends "layout.html" %}
+
+{% block title %}Association Rules - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Association Rules</h1>
+<p>Discover hidden relationships in transactional datasets using the A-priori algorithm.</p>
+{% endblock %}
+
+{% block content %}
+<div class="service-panel glass-card">
+    <form action="/apriori" method="post" enctype="multipart/form-data" class="quantum-form">
+        <div class="upload-zone" id="dropZone">
+            <i class="fas fa-shopping-cart upload-icon"></i>
+            <div class="upload-text">
+                <strong>Upload Transaction Data</strong>
+                <span>Supports .CSV or .XLSX (Each row is a transaction)</span>
+            </div>
+            <input type="file" name="file" accept=".csv, .xlsx" required>
+        </div>
+
+        <div class="settings-grid">
+            <div class="input-group">
+                <label>Metric</label>
+                <select name="metric" class="quantum-select">
+                    <option value="lift" selected>Lift</option>
+                    <option value="confidence">Confidence</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Min Support</label>
+                <input type="number" name="min_support" value="0.1" min="0.01" max="1" step="0.01" required>
+            </div>
+            <div class="input-group">
+                <label>Min Threshold (Confidence/Lift)</label>
+                <input type="number" name="min_threshold" value="0.7" min="0.1" max="10" step="0.1" required>
+            </div>
+            <div class="input-group checkbox-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" name="has_header">
+                    <span class="checkmark"></span>
+                    File has header row
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-quantum full-width">
+            <i class="fas fa-magic"></i> Generate Rules
+        </button>
+    </form>
+
+    {% if error %}
+    <div class="error-msg animate-fade-in">
+        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    {% if rules %}
+    <div class="result-container animate-fade-in">
+        <div class="result-header">Mining Results: {{ rules|length }} rules discovered</div>
+
+        <div class="table-container">
+            <table class="quantum-table">
+                <thead>
+                    <tr>
+                        <th>Antecedents (If)</th>
+                        <th>Consequents (Then)</th>
+                        <th>Support</th>
+                        <th>Confidence</th>
+                        <th>Lift</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rule in rules %}
+                    <tr>
+                        <td><span class="tag">{{ rule.antecedents | join(', ') }}</span></td>
+                        <td><span class="tag consequent">{{ rule.consequents | join(', ') }}</span></td>
+                        <td>{{ "%.4f"|format(rule.support) }}</td>
+                        <td>{{ "%.4f"|format(rule.confidence) }}</td>
+                        <td>{{ "%.4f"|format(rule.lift) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .service-panel {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .settings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .input-group label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    input[type="number"] {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .table-container {
+        margin-top: 1.5rem;
+        overflow-x: auto;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--glass-border);
+    }
+
+    .quantum-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .quantum-table th {
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .quantum-table td {
+        padding: 1rem;
+        border-top: 1px solid var(--glass-border);
+        font-size: 0.9rem;
+    }
+
+    .tag {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .tag.consequent {
+        background: rgba(168, 85, 247, 0.2);
+        color: #c084fc;
+    }
+
+    .quantum-select {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .quantum-select option {
+        background: #1a1a2e;
+        color: white;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        user-select: none;
+    }
+
+    .checkbox-container input {
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+    }
+
+    .error-msg {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin: 1rem 0;
+    }
+</style>
+{% endblock %}

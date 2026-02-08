@@ -1,0 +1,262 @@
+{% extends "layout.html" %}
+
+{% block title %}Cognitive QA - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Cognitive QA</h1>
+<p>Knowledge extraction engine with vocal synthesis output.</p>
+<script>
+  function switchTab(type) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+    event.currentTarget.classList.add('active');
+    document.getElementById(type + 'Section').classList.add('active');
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="qa-container">
+  <div class="glass-card">
+    <form action="/qa" method="post" enctype="multipart/form-data" class="quantum-form">
+      <div class="input-group">
+        <label>Context Repository</label>
+        <textarea name="context" placeholder="Paste the reference document here..."
+          required>{{ context or '' }}</textarea>
+      </div>
+
+      <div class="tabs">
+        <button type="button" class="tab-btn active" onclick="switchTab('text')">Type Question</button>
+        <button type="button" class="tab-btn" onclick="switchTab('voice')">Voice Question</button>
+      </div>
+
+      <div id="textSection" class="tab-content active">
+        <div class="input-group">
+          <label>Query Expression</label>
+          <div class="search-input">
+            <input type="text" name="question" placeholder="Ask a question about the context..."
+              value="{{ question or '' }}">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+      </div>
+
+      <div id="voiceSection" class="tab-content">
+        <div class="upload-zone">
+          <i class="fas fa-microphone-alt upload-icon"></i>
+          <div class="upload-text">
+            <strong>Record Your Query</strong>
+            <span>Upload audio for voice-to-voice QA</span>
+          </div>
+          <input type="file" name="voice" accept="audio/*">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-quantum full-width">
+        <i class="fas fa-brain"></i> Execute Reasoning
+      </button>
+    </form>
+
+    {% if answer %}
+    <div class="result-container animate-fade-in">
+      <div class="result-header">Reasoning Output</div>
+      <div class="answer-box">
+        <div class="answer-text">
+          <label>Extracted Answer</label>
+          <p>{{ answer }}</p>
+        </div>
+
+        <div class="vocal-playback">
+          <audio id="vocalOutput"
+            src="{{ url_for('static', filename='answer.mp3') }}?v={{ range(1, 99999)|random }}"></audio>
+          <button type="button" class="btn-playback" onclick="document.getElementById('vocalOutput').play()">
+            <i class="fas fa-volume-up"></i>
+          </button>
+        </div>
+      </div>
+
+      {% if score %}
+      <div class="confidence-meter">
+        <div class="meter-track">
+          <div class="meter-fill" style="width: {{ score }}%"></div>
+        </div>
+        <div class="meter-info">
+          <span>Confidence Score</span>
+          <span>{{ score }}%</span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .qa-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    min-height: 200px;
+    line-height: 1.6;
+  }
+
+  .search-input {
+    position: relative;
+  }
+
+  .search-input input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1rem 1rem 3rem;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+  }
+
+  .search-input i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-blue);
+  }
+
+  .tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    transition: var(--transition);
+    border-radius: var(--radius-md);
+  }
+
+  .tab-btn.active {
+    color: var(--accent-blue);
+    background: rgba(0, 210, 255, 0.1);
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .upload-zone {
+    border: 2px dashed var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    background: rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .upload-zone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .answer-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 210, 255, 0.05);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--accent-blue);
+  }
+
+  .answer-text label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .answer-text p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .btn-playback {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--quantum-gradient);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: var(--transition);
+  }
+
+  .btn-playback:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+  }
+
+  .confidence-meter {
+    margin-top: 1rem;
+  }
+
+  .meter-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .meter-fill {
+    height: 100%;
+    background: var(--quantum-gradient);
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+  }
+
+  .meter-info {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}

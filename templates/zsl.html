@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+
+{% block title %}Zero-Shot Lab - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Zero-Shot Lab</h1>
+<p>Dynamic classification engine for unforeseen data categories.</p>
+{% endblock %}
+
+{% block content %}
+<div class="service-panel glass-card">
+  <form action="/zsl" method="post" class="quantum-form">
+    <div class="input-group">
+      <label>Abstract Data Input</label>
+      <textarea name="text" placeholder="Enter the content you wish to classify..." required></textarea>
+    </div>
+
+    <div class="input-group">
+      <label>Candidate Categories (Comma Separated)</label>
+      <input type="text" name="labels" placeholder="e.g. Finance, Technology, Health, Sports" required>
+    </div>
+
+    <button type="submit" class="btn-quantum full-width">
+      <i class="fas fa-bullseye"></i> Initialize Zero-Shot Analysis
+    </button>
+  </form>
+
+  {% if error %}
+  <div class="error-msg animate-fade-in">
+    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+  </div>
+  {% endif %}
+
+  {% if result %}
+  <div class="result-container animate-fade-in">
+    <div class="result-header">Engine Output</div>
+
+    <div class="best-prediction">
+      <label>Highest Probability Fit</label>
+      <div class="prediction-value">
+        <span class="category">{{ result.label }}</span>
+        <span class="confidence">{{ result.score }}% Confidence</span>
+      </div>
+    </div>
+
+    <div class="detailed-results">
+      <label>Category Distributions</label>
+      <div class="result-grid">
+        {% for label, score in result.all_results %}
+        <div class="result-row">
+          <div class="row-info">
+            <span>{{ label }}</span>
+            <span>{{ score }}%</span>
+          </div>
+          <div class="row-bar">
+            <div class="bar-fill" style="width: {{ score }}%"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .service-panel {
+    max-width: 850px;
+    margin: 0 auto;
+  }
+
+  textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    color: var(--text-primary);
+    min-height: 150px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+  }
+
+  .best-prediction {
+    background: rgba(0, 210, 255, 0.05);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    border-right: 4px solid var(--accent-blue);
+  }
+
+  .best-prediction label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .prediction-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .prediction-value .category {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .prediction-value .confidence {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-purple);
+  }
+
+  .detailed-results label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .result-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .result-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .row-info {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .row-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--quantum-gradient);
+  }
+
+  .error-msg {
+    margin-top: 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+</style>
+{% endblock %}

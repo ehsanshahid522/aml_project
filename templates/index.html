@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Quantum AI Hub{% endblock %}
+
+{% block page_header %}
+<h1>Quantum Analytics</h1>
+<p>Select a specialized AI engine to begin processing your data.</p>
+{% endblock %}
+
+{% block content %}
+<div class="services-grid">
+  <a href="/gender" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-user-circle"></i></div>
+    <h3>Gender Discovery</h3>
+    <p>Vision Transformer model trained for high-precision gender classification.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/textgen" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-pen-nib"></i></div>
+    <h3>Text Synthesis</h3>
+    <p>Creative language generation powered by GPT-2 architecture.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/translate" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-language"></i></div>
+    <h3>Neural Translate</h3>
+    <p>Advanced English-to-Urdu translation using sequence models.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/sentiment" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-smile-beam"></i></div>
+    <h3>Empathy Engine</h3>
+    <p>Analyze emotional valence in both text and vocal inputs.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/qa" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-brain"></i></div>
+    <h3>Cognitive QA</h3>
+    <p>Extract precise knowledge from context with DistilBERT.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/zsl" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-bullseye"></i></div>
+    <h3>Zero-Shot Lab</h3>
+    <p>Powerful BART-based classification for any unseen categories.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/clustering" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
+    <h3>Data Clusters</h3>
+    <p>Automated pattern discovery using K-Means clustering.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/dbscan" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-braille"></i></div>
+    <h3>DBSCAN Lab</h3>
+    <p>Density-based clustering to identify complex patterns and outliers.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+
+  <a href="/apriori" class="service-card glass-card">
+    <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+    <h3>Market Analytics</h3>
+    <p>Generate association rules from transactional data with A-priori.</p>
+    <div class="card-footer">
+      <span class="btn-quantum-sm">Launch Engine</span>
+    </div>
+  </a>
+</div>
+
+<style>
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    background: var(--quantum-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+
+  .service-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .service-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+
+  .card-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-quantum-sm {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--accent-blue);
+  }
+
+  .service-card:hover .btn-quantum-sm {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends "layout.html" %}
+
+{% block title %}Gender Discovery - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Gender Discovery</h1>
+<p>Upload a visual specimen for neural gender classification.</p>
+{% endblock %}
+
+{% block content %}
+<div class="service-panel glass-card">
+  <form action="/gender" method="post" enctype="multipart/form-data" class="quantum-form">
+    <div class="upload-zone" id="dropZone">
+      <i class="fas fa-cloud-upload-alt upload-icon"></i>
+      <div class="upload-text">
+        <strong>Click to upload</strong> or drag and drop
+        <span>PNG, JPG or WEBP (max. 10MB)</span>
+      </div>
+      <input type="file" name="image" id="fileInput" accept="image/*" required onchange="handleFile(this)">
+    </div>
+
+    <div id="filePreview" class="file-preview"></div>
+
+    <button type="submit" class="btn-quantum full-width">
+      <i class="fas fa-microchip"></i> Run Discovery Engine
+    </button>
+  </form>
+
+  {% if result %}
+  <div class="result-container animate-fade-in">
+    <div class="result-header">Engine Output</div>
+    <div class="result-display">
+      <span class="label">Detected Gender</span>
+      <span class="value">{{ result }}</span>
+    </div>
+    <div class="result-note">
+      <i class="fas fa-info-circle"></i> The vision model identifies facial features to determine classification.
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .service-panel {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .quantum-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .upload-zone {
+    border: 2px dashed var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+  }
+
+  .upload-zone:hover,
+  .upload-zone.dragover {
+    border-color: var(--accent-blue);
+    background: rgba(0, 210, 255, 0.05);
+  }
+
+  .upload-icon {
+    font-size: 3rem;
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+  }
+
+  .upload-text {
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .upload-text strong {
+    color: var(--text-primary);
+  }
+
+  #fileInput {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .full-width {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .file-preview {
+    margin-top: 0.5rem;
+    color: var(--accent-blue);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .result-container {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  .result-header {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent-purple);
+    margin-bottom: 1rem;
+  }
+
+  .result-display {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .result-display .label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .result-display .value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-transform: capitalize;
+  }
+
+  .result-note {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+</style>
+
+<script>
+  function handleFile(input) {
+    const preview = document.getElementById('filePreview');
+    if (input.files && input.files[0]) {
+      preview.innerHTML = `<i class="fas fa-file-image"></i> Selected: ${input.files[0].name}`;
+    }
+  }
+
+  const dropZone = document.getElementById('dropZone');
+  ['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+    });
+  });
+</script>
+{% endblock %}

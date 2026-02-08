@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+
+{% block title %}Data Clusters - Quantum AI{% endblock %}
+
+{% block page_header %}
+<h1>Data Clusters</h1>
+<p>Unsupervised grouping of multivariate datasets using K-Means.</p>
+{% endblock %}
+
+{% block content %}
+<div class="service-panel glass-card">
+    <form action="/clustering" method="post" enctype="multipart/form-data" class="quantum-form">
+        <div class="upload-zone" id="dropZone">
+            <i class="fas fa-file-csv upload-icon"></i>
+            <div class="upload-text">
+                <strong>Upload Data Structure</strong>
+                <span>Supports .CSV or .XLSX datasets</span>
+            </div>
+            <input type="file" name="file" accept=".csv, .xlsx" required onchange="handleFile(this)">
+        </div>
+
+        <div class="cluster-settings">
+            <div class="input-group">
+                <label>Cluster Centroids (K)</label>
+                <input type="number" name="clusters" value="3" min="2" max="10" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-quantum full-width">
+            <i class="fas fa-chart-pie"></i> Map Clusters
+        </button>
+    </form>
+
+    {% if error %}
+    <div class="error-msg animate-fade-in">
+        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    {% if plot_url %}
+    <div class="result-container animate-fade-in">
+        <div class="result-header">Clustering Schema Visualization</div>
+
+        <div class="visualization-box">
+            <img src="data:image/png;base64,{{ plot_url }}" alt="Clustering Plot">
+        </div>
+
+        {% if cluster_info %}
+        <div class="cluster-stats">
+            <label>Population Distribution</label>
+            <div class="stats-grid">
+                {% for cluster, count in cluster_info.items() %}
+                <div class="stat-card">
+                    <span class="cluster-id">Cluster {{ cluster }}</span>
+                    <span class="count-value">{{ count }} Entities</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .service-panel {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .upload-zone {
+        border: 2px dashed var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 3rem;
+        text-align: center;
+        position: relative;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-zone input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: var(--accent-blue);
+        margin-bottom: 1rem;
+    }
+
+    .cluster-settings {
+        margin-top: 1.5rem;
+    }
+
+    .input-group label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    input[type="number"] {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: 0.75rem 1rem;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        width: 100px;
+    }
+
+    .visualization-box {
+        background: white;
+        /* Contrast for charts */
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .visualization-box img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .cluster-stats {
+        margin-top: 2rem;
+    }
+
+    .cluster-stats label {
+        color: var(--text-secondary);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 1.25rem;
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        border-left: 3px solid var(--accent-purple);
+    }
+
+    .cluster-id {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--accent-purple);
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .count-value {
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .error-msg {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin: 1rem 0;
+    }
+</style>
+
+<script>
+    function handleFile(input) {
+        // Simple visual feedback could go here
+    }
+</script>
+{% endblock %}
