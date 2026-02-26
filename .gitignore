@@ -9,4 +9,3 @@ pip_list.txt
 *.mp3
 dataset/
 frontend/node_modules/
-frontend/dist/
