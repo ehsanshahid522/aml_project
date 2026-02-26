@@ -147,13 +147,9 @@ class ModelLoader:
 
 
     def _safe_pipeline(self, *args, **kwargs):
-        try:
-            # Explicitly set device (0 for CUDA if available, -1 for CPU)
-            device_idx = 0 if self.device == "cuda" else -1
-            return pipeline(*args, device=device_idx, **kwargs)
-        except Exception as e:
-            print(f"Failed to load pipeline {args} {kwargs}: {e}")
-            return None
+        # Explicitly set device (0 for CUDA if available, -1 for CPU)
+        device_idx = 0 if self.device == "cuda" else -1
+        return pipeline(*args, device=device_idx, **kwargs)
 
 # Singleton instance
 loader = ModelLoader()

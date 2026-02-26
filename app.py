@@ -51,6 +51,16 @@ from mlxtend.preprocessing import TransactionEncoder
 def health():
     return jsonify({"status": "ok"})
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    error_details = traceback.format_exc()
+    print(error_details)
+    return jsonify({
+        "error": f"Internal Server Error: {str(e)}",
+        "traceback": error_details
+    }), 500
+
 # -------- GENDER CLASSIFICATION -------- #
 @app.route('/api/gender', methods=['POST'])
 def gender():
