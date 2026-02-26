@@ -1,3 +1,4 @@
 templates/**/*.html linguist-vendored
 static/**/* linguist-vendored
 *.pth filter=lfs diff=lfs merge=lfs -text
+**/*.png filter=lfs diff=lfs merge=lfs -text
