@@ -119,7 +119,7 @@ def textgen():
 # -------- TRANSLATION -------- #
 @app.route('/api/translate', methods=['POST'])
 def translate():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     text = data.get('text', '')
     if not text:
         return jsonify({"error": "No text provided"}), 400
