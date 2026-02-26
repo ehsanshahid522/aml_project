@@ -258,5 +258,38 @@
     font-size: 0.85rem;
     font-weight: 600;
   }
+
+  @media (max-width: 768px) {
+    .qa-container {
+      max-width: 100%;
+    }
+
+    .answer-box {
+      flex-direction: column;
+      gap: 1.5rem;
+      text-align: center;
+      border-left: none;
+      border-top: 5px solid var(--accent-blue);
+      padding: 1.5rem;
+    }
+
+    .answer-text p {
+      font-size: 1.2rem;
+    }
+
+    .tabs {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      width: 100%;
+      text-align: center;
+    }
+
+    textarea {
+      min-height: 150px;
+    }
+  }
 </style>
 {% endblock %}

@@ -14,7 +14,10 @@
 
 <body>
     <div class="dashboard-wrapper">
-        <aside class="sidebar">
+        <!-- Mobile Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <div class="brand-icon">AI</div>
                 <span class="brand-name">Quantum Hub</span>
@@ -66,6 +69,9 @@
 
         <main class="main-content">
             <header class="top-bar">
+                <button class="hamburger-btn" id="hamburgerBtn" onclick="openSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="page-title">
                     {% block page_header %}{% endblock %}
                 </div>
@@ -106,6 +112,23 @@
     </style>
 
     {% block extra_js %}{% endblock %}
+
+    <script>
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.add('active');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+        // Close sidebar when a nav link is clicked on mobile
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) closeSidebar();
+            });
+        });
+    </script>
 </body>
 
 </html>

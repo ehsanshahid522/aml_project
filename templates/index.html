@@ -143,5 +143,20 @@
   .service-card:hover .btn-quantum-sm {
     text-decoration: underline;
   }
+
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .service-card h3 {
+      font-size: 1.2rem;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+    }
+  }
 </style>
 {% endblock %}
