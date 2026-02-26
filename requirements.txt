@@ -17,5 +17,5 @@ scipy
 soundfile
 openpyxl
 werkzeug
-openai-whisper
 gunicorn
+protobuf

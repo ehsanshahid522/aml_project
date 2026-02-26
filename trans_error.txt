@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "d:\A.M.L\test_trans.py", line 5, in <module>
+    pipe = pipeline('translation', model='Helsinki-NLP/opus-mt-en-ur')
+  File "D:\A.M.L\.venv\Lib\site-packages\transformers\pipelines\__init__.py", line 1078, in pipeline
+    raise e
+  File "D:\A.M.L\.venv\Lib\site-packages\transformers\pipelines\__init__.py", line 1073, in pipeline
+    tokenizer = AutoTokenizer.from_pretrained(
+        tokenizer_identifier, use_fast=use_fast, _from_pipeline=task, **hub_kwargs, **tokenizer_kwargs
+    )
+  File "D:\A.M.L\.venv\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 1180, in from_pretrained
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: This tokenizer cannot be instantiated. Please make sure you have `sentencepiece` installed in order to use this tokenizer.
