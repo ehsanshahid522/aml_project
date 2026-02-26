@@ -15,7 +15,9 @@ try:
 except ImportError:
     load_model = None
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__,
+            static_folder='frontend/dist',
+            static_url_path='')
 CORS(app)  # Enable CORS for React frontend
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -400,6 +402,29 @@ def apriori_route():
         import traceback
         print(traceback.format_exc())
         return jsonify({"error": f"A-priori error: {str(e)}"}), 500
+
+
+# ============ SERVE STATIC UPLOADS (for ML file handling) ============ #
+@app.route('/static/uploads/<path:filename>')
+def serve_upload(filename):
+    return send_from_directory('static/uploads', filename)
+
+@app.route('/static/<path:filename>')
+def serve_static_files(filename):
+    return send_from_directory('static', filename)
+
+# ============ SERVE REACT APP (catch-all) ============ #
+@app.route('/')
+def serve_react():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_react_paths(path):
+    # Try to serve the file from dist, otherwise serve index.html (for React Router)
+    file_path = os.path.join(app.static_folder, path)
+    if os.path.isfile(file_path):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 if __name__ == '__main__':
