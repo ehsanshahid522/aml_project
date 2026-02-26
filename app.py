@@ -29,15 +29,6 @@ TEST_DIR = "/content/drive/MyDrive/AML-F24/Code/image_datset/image_datset/test"
 # ---------------- MODELS ---------------- #
 from models_loader import loader
 
-sentiment_model = loader.sentiment_pipeline
-qa_model = loader.qa_pipeline
-textgen_model = loader.text_gen_pipeline
-translator = loader.translator_pipeline
-stt_model = loader.stt_pipeline
-zsl_model = loader.zsl_pipeline
-gender_classifier = loader.gender_classifier
-gender_model = loader.cnn_model
-
 # Clustering Dependencies
 import pandas as pd
 from sklearn.cluster import KMeans, DBSCAN
@@ -74,15 +65,18 @@ def gender():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(filepath)
 
-    if gender_classifier:
+    classifier = loader.gender_classifier
+    cnn = loader.cnn_model
+
+    if classifier:
         try:
             img = Image.open(filepath)
-            results = gender_classifier(img)
+            results = classifier(img)
             result = results[0]['label'].capitalize()
             return jsonify({"result": result})
         except Exception as e:
             return jsonify({"error": f"Error processing image: {e}"}), 500
-    elif gender_model:
+    elif cnn:
         try:
             import torch
             img = Image.open(filepath).convert('RGB')
@@ -90,7 +84,7 @@ def gender():
             img_array = np.array(img).astype(np.float32) / 255.0
             img_tensor = torch.from_numpy(img_array).permute(2, 0, 1).unsqueeze(0)
             with torch.no_grad():
-                prediction = gender_model(img_tensor)
+                prediction = cnn(img_tensor)
             result = "Male" if prediction.item() > 0.5 else "Female"
             return jsonify({"result": result})
         except Exception as e:
@@ -105,6 +99,8 @@ def textgen():
     prompt = data.get('prompt', '')
     if not prompt:
         return jsonify({"error": "No prompt provided"}), 400
+    
+    textgen_model = loader.text_gen_pipeline
     if textgen_model:
         result = textgen_model(prompt, max_length=50)[0]['generated_text']
         return jsonify({"generated_text": result})
@@ -117,10 +113,20 @@ def translate():
     text = data.get('text', '')
     if not text:
         return jsonify({"error": "No text provided"}), 400
-    if translator:
-        result = translator(text)[0]['translation_text']
-        return jsonify({"translated_text": result})
-    return jsonify({"error": "Translation model not available"}), 500
+    
+    # Properly access the property to instantiate the model lazily
+    translator_model = loader.translator_pipeline
+    
+    if translator_model:
+        try:
+            result = translator_model(text)[0]['translation_text']
+            return jsonify({"translated_text": result})
+        except Exception as e:
+            import traceback
+            print(f"Translation generation error: {traceback.format_exc()}")
+            return jsonify({"error": f"Error during translation: {str(e)}"}), 500
+            
+    return jsonify({"error": "Translation model not available. Check server logs."}), 500
 
 # -------- SENTIMENT ANALYSIS -------- #
 @app.route('/api/sentiment', methods=['POST'])
@@ -143,6 +149,7 @@ def sentiment():
         audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
         audio_file.save(audio_path)
 
+        stt_model = loader.stt_pipeline
         if stt_model is None:
             return jsonify({"error": "STT model not available"}), 500
         try:
@@ -158,6 +165,7 @@ def sentiment():
     else:
         return jsonify({"error": "No input provided"}), 400
 
+    sentiment_model = loader.sentiment_pipeline
     if sentiment_model is None:
         return jsonify({"error": "Sentiment model not available"}), 500
 
@@ -195,6 +203,10 @@ def qa():
         audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
         audio_file.save(audio_path)
         try:
+            stt_model = loader.stt_pipeline
+            if stt_model is None:
+                return jsonify({"error": "STT model not available. Check logs."}), 500
+                
             audio_array, sampling_rate = librosa.load(audio_path, sr=16000)
             audio_array = audio_array.astype(np.float32)
             stt_result = stt_model(audio_array)
@@ -205,6 +217,7 @@ def qa():
     if not question_text or not context:
         return jsonify({"error": "Both context and question are required"}), 400
 
+    qa_model = loader.qa_pipeline
     if qa_model is None:
         return jsonify({"error": "QA model not available"}), 500
 
@@ -242,6 +255,7 @@ def zsl():
 
     candidate_labels = [l.strip() for l in labels.split(',') if l.strip()]
 
+    zsl_model = loader.zsl_pipeline
     if zsl_model is None:
         return jsonify({"error": "ZSL model not available"}), 500
 
