@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Brain, Volume2 } from 'lucide-react';
-import { PageHeader, ResultBox, ErrorBox, SubmitButton, UploadZone } from '../components/UI';
+import { Brain, Volume2, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PageHeader, ResultBox, ErrorBox, SubmitButton, UploadZone, SectionLabel } from '../components/UI';
 
 export default function CognitiveQA() {
     const [tab, setTab] = useState('text');
@@ -15,7 +16,6 @@ export default function CognitiveQA() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); setError(''); setResult(null);
-
         try {
             let res;
             if (tab === 'text') {
@@ -41,11 +41,11 @@ export default function CognitiveQA() {
 
     return (
         <div className="max-w-3xl mx-auto">
-            <PageHeader title="Cognitive QA" subtitle="Knowledge extraction engine with vocal synthesis output." />
+            <PageHeader icon={Brain} title="Cognitive QA" subtitle="Knowledge extraction engine with vocal synthesis output using DistilBERT." />
 
-            <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 space-y-5">
+            <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 space-y-6">
                 <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">Context Repository</label>
+                    <label className="block text-sm font-semibold text-slate-300 mb-2.5">Context Repository</label>
                     <textarea
                         value={context}
                         onChange={(e) => setContext(e.target.value)}
@@ -55,30 +55,35 @@ export default function CognitiveQA() {
                     />
                 </div>
 
-                <div className="flex gap-2 border-b border-white/10 pb-3">
+                <div className="flex gap-1 p-1 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
                     {['text', 'voice'].map(t => (
                         <button
                             key={t}
                             type="button"
                             onClick={() => setTab(t)}
-                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400' : 'text-slate-400 hover:bg-white/5'
+                            className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${tab === t
+                                    ? 'bg-gradient-to-r from-cyan-500/15 to-purple-500/10 text-cyan-400 shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
-                            {t === 'text' ? 'Type Question' : 'Voice Question'}
+                            {t === 'text' ? '⌨️ Type Question' : '🎙 Voice Question'}
                         </button>
                     ))}
                 </div>
 
                 {tab === 'text' ? (
                     <div>
-                        <label className="block text-sm font-semibold text-slate-300 mb-2">Query</label>
-                        <input
-                            type="text"
-                            value={question}
-                            onChange={(e) => setQuestion(e.target.value)}
-                            placeholder="Ask a question about the context..."
-                            className="quantum-input"
-                        />
+                        <label className="block text-sm font-semibold text-slate-300 mb-2.5">Query Expression</label>
+                        <div className="relative">
+                            <MessageSquare size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-500/60" />
+                            <input
+                                type="text"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                placeholder="Ask a question about the context..."
+                                className="quantum-input pl-11"
+                            />
+                        </div>
                     </div>
                 ) : (
                     <UploadZone accept="audio/*" onChange={(e) => setFile(e.target.files[0])} label="Record Your Query" sublabel="Upload audio for voice-to-voice QA" />
@@ -93,35 +98,46 @@ export default function CognitiveQA() {
 
             {result && (
                 <ResultBox>
-                    <p className="text-xs font-bold uppercase tracking-widest text-purple-400 mb-4">Reasoning Output</p>
+                    <SectionLabel>Reasoning Output</SectionLabel>
 
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 rounded-xl bg-black/20 border-l-4 border-cyan-400">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 rounded-2xl bg-black/20 border-l-4 border-cyan-400">
                         <div className="flex-1">
-                            <span className="text-xs font-bold text-cyan-400 uppercase">Extracted Answer</span>
-                            <p className="text-xl font-bold text-slate-100 mt-1">{result.answer}</p>
+                            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Extracted Answer</span>
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="text-lg sm:text-xl font-bold text-slate-100 mt-2 leading-relaxed"
+                            >
+                                {result.answer}
+                            </motion.p>
                         </div>
                         {result.audio_url && (
-                            <button
+                            <motion.button
                                 type="button"
                                 onClick={playAudio}
-                                className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 grid place-items-center text-white hover:scale-110 transition-transform flex-shrink-0"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 grid place-items-center text-white shadow-lg shadow-cyan-500/20 flex-shrink-0"
                             >
                                 <Volume2 size={22} />
-                            </button>
+                            </motion.button>
                         )}
                     </div>
 
                     {result.score > 0 && (
-                        <div className="mt-4">
-                            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full transition-all duration-1000"
-                                    style={{ width: `${result.score}%` }}
+                        <div className="mt-5">
+                            <div className="h-2 bg-white/[0.04] rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${result.score}%` }}
+                                    transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
+                                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full shadow-sm shadow-cyan-500/30"
                                 />
                             </div>
-                            <div className="flex justify-between text-sm text-slate-400 mt-1">
-                                <span>Confidence</span>
-                                <span>{result.score}%</span>
+                            <div className="flex justify-between text-xs text-slate-500 mt-1.5 font-medium">
+                                <span>Confidence Score</span>
+                                <span className="text-cyan-400">{result.score}%</span>
                             </div>
                         </div>
                     )}

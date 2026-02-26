@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Smile, Frown, Meh, Mic } from 'lucide-react';
-import { PageHeader, ResultBox, ErrorBox, SubmitButton, UploadZone } from '../components/UI';
+import { Smile, Frown, Meh, Mic, HeartPulse } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PageHeader, ResultBox, ErrorBox, SubmitButton, UploadZone, SectionLabel } from '../components/UI';
 
 export default function EmpathyEngine() {
     const [tab, setTab] = useState('text');
@@ -14,7 +15,6 @@ export default function EmpathyEngine() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); setError(''); setResult(null);
-
         try {
             let res;
             if (tab === 'text') {
@@ -30,43 +30,38 @@ export default function EmpathyEngine() {
         } finally { setLoading(false); }
     };
 
-    const sentimentIcon = (label) => {
+    const sentimentConfig = (label) => {
         const l = (label || '').toLowerCase();
-        if (l === 'positive') return <Smile size={48} className="text-emerald-400" />;
-        if (l === 'negative') return <Frown size={48} className="text-red-400" />;
-        return <Meh size={48} className="text-cyan-400" />;
-    };
-
-    const sentimentColor = (label) => {
-        const l = (label || '').toLowerCase();
-        if (l === 'positive') return 'text-emerald-400';
-        if (l === 'negative') return 'text-red-400';
-        return 'text-cyan-400';
+        if (l === 'positive') return { icon: Smile, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' };
+        if (l === 'negative') return { icon: Frown, color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' };
+        return { icon: Meh, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' };
     };
 
     return (
         <div className="max-w-2xl mx-auto">
-            <PageHeader title="Empathy Engine" subtitle="Contextual sentiment analysis for text and vocal recordings." />
+            <PageHeader icon={HeartPulse} title="Empathy Engine" subtitle="Contextual sentiment analysis for text and vocal recordings." />
 
-            <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 space-y-5">
+            <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 space-y-6">
                 {/* Tabs */}
-                <div className="flex gap-2 border-b border-white/10 pb-3">
+                <div className="flex gap-1 p-1 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
                     {['text', 'voice'].map(t => (
                         <button
                             key={t}
                             type="button"
                             onClick={() => setTab(t)}
-                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400' : 'text-slate-400 hover:bg-white/5'
+                            className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${tab === t
+                                    ? 'bg-gradient-to-r from-cyan-500/15 to-purple-500/10 text-cyan-400 shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
-                            {t === 'text' ? 'Text Analysis' : 'Vocal Analysis'}
+                            {t === 'text' ? '📝 Text Analysis' : '🎙 Vocal Analysis'}
                         </button>
                     ))}
                 </div>
 
                 {tab === 'text' ? (
                     <div>
-                        <label className="block text-sm font-semibold text-slate-300 mb-2">Input Text</label>
+                        <label className="block text-sm font-semibold text-slate-300 mb-2.5">Input Text</label>
                         <textarea
                             value={text}
                             onChange={(e) => setText(e.target.value)}
@@ -75,40 +70,64 @@ export default function EmpathyEngine() {
                         />
                     </div>
                 ) : (
-                    <div>
-                        <UploadZone accept="audio/*" onChange={(e) => setFile(e.target.files[0])} label="Upload Voice Recording" sublabel="WAV or MP3 format" />
-                        {file && <p className="text-sm text-cyan-400 text-center mt-2 font-medium">🎙 {file.name}</p>}
-                    </div>
+                    <UploadZone accept="audio/*" onChange={(e) => setFile(e.target.files[0])} label="Upload Voice Recording" sublabel="WAV or MP3 format" />
                 )}
 
                 <SubmitButton loading={loading}>
-                    <Mic size={18} /> Analyze Sentiment
+                    <HeartPulse size={18} /> Analyze Sentiment
                 </SubmitButton>
             </form>
 
             <ErrorBox message={error} />
 
-            {result && (
-                <ResultBox>
-                    <p className="text-xs font-bold uppercase tracking-widest text-purple-400 mb-4">Engine Output</p>
-                    {result.transcript && (
-                        <div className="mb-4 p-3 rounded-xl bg-black/20 text-sm">
-                            <span className="text-xs font-bold text-cyan-400 uppercase">Transcription</span>
-                            <p className="mt-1 text-slate-300">"{result.transcript}"</p>
+            {result && (() => {
+                const cfg = sentimentConfig(result.result);
+                const Icon = cfg.icon;
+                return (
+                    <ResultBox>
+                        <SectionLabel>Engine Output</SectionLabel>
+
+                        {result.transcript && (
+                            <div className="mb-5 p-4 rounded-2xl bg-black/20 border border-white/[0.05]">
+                                <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Transcription</span>
+                                <p className="mt-1.5 text-slate-300 text-sm leading-relaxed">"{result.transcript}"</p>
+                            </div>
+                        )}
+
+                        <div className={`flex items-center gap-6 p-5 rounded-2xl ${cfg.bg} border ${cfg.border}`}>
+                            <div className="flex-1">
+                                <span className="text-xs text-slate-400 font-medium">Detected Sentiment</span>
+                                <motion.p
+                                    initial={{ scale: 0.5 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: 'spring', stiffness: 200 }}
+                                    className={`text-3xl font-black capitalize ${cfg.color}`}
+                                >
+                                    {result.result}
+                                </motion.p>
+                                <div className="mt-2 flex items-center gap-2">
+                                    <div className="h-1.5 flex-1 bg-black/20 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${result.score}%` }}
+                                            transition={{ duration: 1, delay: 0.3 }}
+                                            className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full"
+                                        />
+                                    </div>
+                                    <span className="text-xs text-slate-400 font-semibold">{result.score}%</span>
+                                </div>
+                            </div>
+                            <motion.div
+                                initial={{ rotate: -20, scale: 0 }}
+                                animate={{ rotate: 0, scale: 1 }}
+                                transition={{ type: 'spring', delay: 0.2 }}
+                            >
+                                <Icon size={52} className={cfg.color} />
+                            </motion.div>
                         </div>
-                    )}
-                    <div className="flex items-center gap-6 p-4 rounded-xl bg-white/3">
-                        <div className="flex-1">
-                            <span className="text-sm text-slate-400">Detected Sentiment</span>
-                            <p className={`text-3xl font-extrabold capitalize ${sentimentColor(result.result)}`}>
-                                {result.result}
-                            </p>
-                            <span className="text-sm text-slate-500">{result.score}% confidence</span>
-                        </div>
-                        {sentimentIcon(result.result)}
-                    </div>
-                </ResultBox>
-            )}
+                    </ResultBox>
+                );
+            })()}
         </div>
     );
 }
