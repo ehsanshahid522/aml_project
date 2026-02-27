@@ -54,7 +54,7 @@ export default function Sidebar({ isOpen, onClose }) {
                         <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#060a15] animate-pulse" />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-base font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">A.M.L Project</span>
+                        <span className="text-base font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Core Intelligence Hub</span>
                         <span className="text-[10px] text-cyan-500/80 font-semibold uppercase tracking-widest">AI Platform</span>
                     </div>
                     <button onClick={onClose} className="lg:hidden ml-auto p-1.5 hover:bg-white/5 rounded-xl transition-colors">

@@ -48,7 +48,7 @@ export default function Dashboard() {
                         <Sparkles size={18} className="text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight underline decoration-cyan-500/30 underline-offset-8">A.M.L Project</h1>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight underline decoration-cyan-500/30 underline-offset-8">Core Intelligence Hub</h1>
                     </div>
                 </div>
                 <p className="text-slate-400 text-sm sm:text-base max-w-lg leading-relaxed">
