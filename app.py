@@ -15,11 +15,15 @@ try:
 except ImportError:
     load_model = None
 
+# Use absolute path for robustness
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+static_dir = os.path.join(BASE_DIR, 'frontend', 'dist')
+
 app = Flask(__name__,
-            static_folder='frontend/dist',
+            static_folder=static_dir,
             static_url_path='')
 CORS(app)  # Enable CORS for React frontend
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Dataset paths
@@ -429,6 +433,10 @@ def apriori_route():
 
 
 # ============ SERVE STATIC UPLOADS (for ML file handling) ============ #
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 @app.route('/static/uploads/<path:filename>')
 def serve_upload(filename):
     return send_from_directory('static/uploads', filename)
@@ -438,17 +446,13 @@ def serve_static_files(filename):
     return send_from_directory('static', filename)
 
 # ============ SERVE REACT APP (catch-all) ============ #
-@app.route('/')
-def serve_react():
-    return send_from_directory(app.static_folder, 'index.html')
-
+@app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def serve_react_paths(path):
-    # Try to serve the file from dist, otherwise serve index.html (for React Router)
-    file_path = os.path.join(app.static_folder, path)
-    if os.path.isfile(file_path):
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, 'index.html')
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 
 if __name__ == '__main__':
